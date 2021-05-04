@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Customers{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+
+{% if messages %}
+  {% for message in messages %}
+  <div >
+    <script>
+    alert('{{message}}');</script>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> <a class="navbar-brand" href="#" data-abc="true">BBBOOTSTRAP</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+    <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"> <a class="nav-link" href="{% url 'home' %}" data-abc="true">Medicine<span class="sr-only">(current)</span></a> </li>
+            <li class="nav-item active"> <a class="nav-link" href="{% url 'home2' %}" data-abc="true">Customer</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="{% url 'add' %}" data-abc="true">Add Customer</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="{% url 'logout' %}" data-abc="true">Log Out</a> </li>
+  
+        </ul>
+        <form action="{% url 'search_results2' %}" method="get" class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" size="35" name="q" type="text" placeholder="Enter Customer name or phone no." size="50"><button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button> 
+        </form>
+         </div>
+  </nav>
+
+
+  
+</div>
+<h1 style="margin: 2%; color: gray;">Hi,{{ user.username }}!</h1>
+{% else %}
+  <p style="margin: 2%; color: gray;" >You are not logged in</p>
+  <a href="{% url 'login' %}" style="margin: 2%;" class="btn btn-primary">Log In</a>
+{% endif %}
+
+{% endblock %}
