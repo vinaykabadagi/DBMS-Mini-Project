@@ -30,20 +30,80 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media/
+static/
 
-# Environment variables
+# Virtual Environment
+venv/
+env/
+ENV/
 .env
 .venv
-env/
-venv/
-ENV/
+env.bak/
+venv.bak/
 
-# IDE
+# IDE/Editor
 .idea/
 .vscode/
 *.swp
 *.swo
+*~
+.project
+.pydevproject
+.settings/
 
-# OS
+# OS generated files
 .DS_Store
-Thumbs.db 
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Test/Coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Documentation
+docs/_build/
+site/
+
+# Backup files
+*.bak
+*.swp
+*.swo
+*~
+
+# Project specific
+add_test_data.py
+update_dates.py 
