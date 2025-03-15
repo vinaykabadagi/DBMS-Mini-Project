@@ -1,61 +1,61 @@
 # PharmaCare - Pharmacy Management System
 
-A comprehensive pharmacy management system built with Django that helps pharmacies manage inventory, sales, and customer relationships efficiently.
+A modern, web-based pharmacy management system built with Django and Bootstrap 5. PharmaCare helps pharmacies manage their inventory, sales, and customer relationships efficiently.
 
 ## Features
 
-### 1. Dashboard
+### Dashboard
 - Real-time sales analytics
-- Monthly sales overview
-- Weekly sales chart
+- Daily and monthly sales overview
 - Low stock alerts
-- Expiry date tracking
-- Quick access to key metrics
+- Expiring inventory notifications
+- Top selling medicines chart
 
-### 2. Inventory Management
-- Add and manage medicines
-- Track stock levels
-- Batch management with expiry dates
-- Low stock notifications
-- Brand and category organization
-- Stock adjustment history
+### Inventory Management
+- Medicine catalog with detailed information
+- Batch-wise stock tracking
+- Expiry date monitoring
+- Stock adjustment functionality
+- Low stock alerts
 
-### 3. Sales Management
-- Quick sale processing
+### Sales Management
+- Quick and easy sale creation
+- Customer search integration
 - Multiple items per sale
-- Customer information tracking
-- Prescription attachment
-- Sales history
-- Daily/Weekly/Monthly reports
+- Automatic stock updates
+- Payment method tracking
+- Complete sale history
 
-### 4. Customer Management
+### Customer Management
 - Customer database
 - Purchase history tracking
-- Search functionality
+- Total purchase statistics
+- Easy customer search
 - Customer details management
-- Prescription records
 
 ## Technical Stack
 
-- **Backend**: Django 5.0.3
-- **Database**: SQLite/PostgreSQL
-- **Frontend**: Bootstrap 5
-- **Additional Libraries**:
-  - django-crispy-forms
-  - django-environ
-  - Pillow
-  - django-widget-tweaks
-  - whitenoise
+### Backend
+- Django 4.x
+- Python 3.x
+- SQLite/PostgreSQL
+
+### Frontend
+- Bootstrap 5
+- Select2 for enhanced dropdowns
+- Font Awesome icons
+- jQuery for DOM manipulation
+- AJAX for dynamic data loading
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/DBMS-Mini-Project.git
+git clone https://github.com/USERNAME/pharmamanager.git
 cd DBMS-Mini-Project
 ```
 
-2. Create and activate virtual environment:
+2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -66,78 +66,70 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env file with your configuration
-```
-
-5. Run migrations:
+4. Apply database migrations:
 ```bash
 python manage.py migrate
 ```
 
-6. Create superuser:
+5. Create a superuser:
 ```bash
 python manage.py createsuperuser
 ```
 
-7. Run the development server:
+6. Run the development server:
 ```bash
 python manage.py runserver
 ```
 
 ## Usage
 
-### Initial Setup
-1. Log in as admin
-2. Add medicine brands and categories
-3. Add initial inventory
-4. Create staff accounts if needed
+### Setting Up Initial Data
+- Log in as admin
+- Add medicine categories and brands
+- Add medicines with their details
+- Create initial inventory batches
+- Add customers
 
-### Daily Operations
-1. **Sales Processing**:
-   - Create new sale
-   - Select medicines
-   - Add customer details
-   - Process payment
+### Making a Sale
+1. Click "New Sale" from the dashboard
+2. Select or add a customer
+3. Add medicines to the sale
+4. Select payment method
+5. Complete the sale
 
-2. **Inventory Management**:
-   - Check low stock alerts
-   - Add new stock
-   - Adjust inventory
-   - Track expiry dates
+### Managing Inventory
+- Monitor stock levels from dashboard
+- Adjust stock quantities as needed
+- Track expiring medicines
+- Add new batches when stock arrives
 
-3. **Customer Management**:
-   - Add new customers
-   - View purchase history
-   - Update customer information
+### Customer Management
+- Add new customers
+- View customer purchase history
+- Track customer statistics
+- Search customers by name or phone
 
 ## Security Features
-
 - User authentication required
-- Role-based access control
-- Secure password storage
+- Login protection for all views
 - CSRF protection
-- XSS protection
-- Environment variable configuration
-- Secure cookie handling
+- Form validation
+- Protected customer deletion
 
 ## Best Practices
-
-- Regular backups recommended
-- Monitor stock levels
-- Regular expiry date checks
-- Update customer information
-- Review sales analytics
+- Optimized database queries
+- Proper error handling
+- User-friendly messages
+- Responsive design
+- Clean code structure
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch
+2. Create a feature branch
 3. Commit your changes
 4. Push to the branch
-5. Create a pull request
+5. Create a Pull Request
 
 ## License
 
@@ -145,13 +137,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- Django community
+- Django framework
 - Bootstrap team
+- Select2 library
+- Font Awesome
 - All contributors
 
 ## Support
 
-For support, please:
-1. Check the documentation
-2. Create an issue
-3. Contact the development team
+For support, please open an issue in the GitHub repository or contact the development team.

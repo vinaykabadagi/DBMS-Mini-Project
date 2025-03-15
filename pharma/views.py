@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.db.models import Sum, Count, Q, F, DecimalField, Max
 from django.utils import timezone
 from datetime import timedelta, datetime
+import json
 from .models import Medicine, Brand, Customer, Batch, Sale, SaleItem, Prescription
 from .forms import (
     MedicineForm, BatchForm, CustomerForm, SaleForm, 
@@ -15,29 +16,31 @@ from django.http import JsonResponse
 from django.db.models.functions import Coalesce
 from decimal import Decimal
 from django.db.models.deletion import ProtectedError
+from django.utils.html import escape
 
 # Create your views here.
-class HomePageView(TemplateView):
+class HomePageView(LoginRequiredMixin, TemplateView):
     template_name='home.html'
 
-class HomePageView2(TemplateView):
+class HomePageView2(LoginRequiredMixin, TemplateView):
     template_name='home2.html'
 
 
-class SearchResultsView(ListView):
+class SearchResultsView(LoginRequiredMixin, ListView):
     model = Medicine
     template_name = 'search_results.html'
 
-    def get_queryset(self): # new
-        query = self.request.GET.get('q')
-        object_list = Medicine.objects.raw('SELECT * FROM pharma_medicine a,pharma_content d,pharma_medicine_content b where a.id=b.medicine_id and d.id=b.content_id and d.name = %s ',[query] )
-        if object_list:
-            return object_list
-        else:
-            object_list = Medicine.objects.raw('SELECT * FROM pharma_medicine where name = %s',[query])
-            return object_list
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        if not query:
+            return Medicine.objects.none()
+            
+        return Medicine.objects.filter(
+            Q(name__iexact=query) |
+            Q(content__name__iexact=query)
+        ).distinct()
 
-class SearchResultsView2(ListView):
+class SearchResultsView2(LoginRequiredMixin, ListView):
     model = Customer
     template_name = 'search_results2.html'
 
@@ -46,6 +49,7 @@ class SearchResultsView2(ListView):
         object_list = Customer.objects.filter(Q(name__icontains=query) | Q(phone__icontains=query))
         return object_list
 
+@login_required
 def add_view(request): 
     if request.method == 'POST':
         fm = CustomerForm(request.POST)
@@ -60,17 +64,21 @@ def add_view(request):
         fm = CustomerForm()
     return render(request,'add.html',{'form':fm})
 
+@login_required
 def remove(request, item_id): 
     item = Medicine.objects.get(id=item_id) 
     item.delete() 
     messages.info(request, "Item removed !!!") 
     return redirect('home') 
+
+@login_required
 def remove2(request, item_id): 
     item = Customer.objects.get(id=item_id) 
     item.delete() 
     messages.info(request, "Item removed !!!") 
     return redirect('home2') 
 
+@login_required
 def update(request, item_id):
     query = request.GET.get('q')
     item = quantity.objects.get(id=item_id)
@@ -290,7 +298,7 @@ def stock_adjustment(request, batch_id):
     batch = get_object_or_404(Batch, id=batch_id)
     if request.method == 'POST':
         new_quantity = request.POST.get('quantity')
-        reason = request.POST.get('reason')
+        reason = escape(request.POST.get('reason', ''))
         
         if new_quantity and reason:
             old_quantity = batch.quantity
@@ -449,10 +457,11 @@ def delete_customer(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
     if request.method == 'POST':
         try:
+            name = escape(customer.name)  # Escape the name before using in message
             customer.delete()
-            messages.success(request, f'Customer {customer.name} has been deleted successfully')
+            messages.success(request, f'Customer {name} has been deleted successfully')
         except ProtectedError:
-            messages.error(request, f'Cannot delete customer {customer.name} because they have associated sales records')
+            messages.error(request, f'Cannot delete customer {escape(customer.name)} because they have associated sales records')
         return redirect('customer_list')
     return redirect('customer_list')
 
@@ -473,4 +482,12 @@ def sale_history(request):
     
     return render(request, 'pharma/sale_history.html', {
         'sales': sales
-    }) 
+    })
+
+def handler404(request, exception):
+    """Custom 404 error handler that doesn't expose paths"""
+    return render(request, '404.html', status=404)
+
+def handler500(request):
+    """Custom 500 error handler that doesn't expose paths"""
+    return render(request, '500.html', status=500) 

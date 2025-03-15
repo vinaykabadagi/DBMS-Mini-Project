@@ -107,4 +107,9 @@ site/
 
 # Project specific
 add_test_data.py
-update_dates.py 
+update_dates.py
+
+# Logs
+logs/
+*.log
+django.log 
