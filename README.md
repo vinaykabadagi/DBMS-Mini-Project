@@ -51,7 +51,7 @@ A modern, web-based pharmacy management system built with Django and Bootstrap 5
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/USERNAME/pharmamanager.git
+git clone https://github.com/vinaykabadagi/DBMS-Mini-Project.git
 cd DBMS-Mini-Project
 ```
 
