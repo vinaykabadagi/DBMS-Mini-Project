@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ medicine.name }} - PharmaCare{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="h3 mb-0">{{ medicine.name }}</h1>
+            <p class="text-muted mb-0">{{ medicine.generic_name }}</p>
+        </div>
+        <div class="btn-group">
+            <a href="{% url 'admin:pharma_medicine_change' medicine.id %}" class="btn btn-outline-primary">
+                <i class="fas fa-edit me-1"></i>Edit
+            </a>
+            <a href="{% url 'admin:pharma_batch_add' %}?medicine={{ medicine.id }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Add Stock
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Medicine Details -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Medicine Information</h5>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Brand</span>
+                            <span class="fw-medium">{{ medicine.brand.name }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Category</span>
+                            <span class="badge bg-light text-dark">{{ medicine.category }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Price</span>
+                            <span class="fw-medium">₹{{ medicine.price }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Prescription Required</span>
+                            {% if medicine.prescription_required %}
+                            <span class="badge bg-warning text-dark">Required</span>
+                            {% else %}
+                            <span class="badge bg-success">Not Required</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mb-2">Description</h6>
+                    <p class="mb-0">{{ medicine.description|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- Stock Information -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Stock Information</h5>
+                        <a href="{% url 'admin:pharma_batch_add' %}?medicine={{ medicine.id }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus me-1"></i>Add Batch
+                        </a>
+                    </div>
+
+                    {% if batches %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Batch Number</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Manufacturing Date</th>
+                                    <th>Expiry Date</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for batch in batches %}
+                                <tr>
+                                    <td>{{ batch.batch_number }}</td>
+                                    <td>
+                                        {% if batch.quantity == 0 %}
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                        {% elif batch.quantity <= 10 %}
+                                        <span class="badge bg-warning text-dark">Low ({{ batch.quantity }})</span>
+                                        {% else %}
+                                        <span class="badge bg-success">{{ batch.quantity }} units</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>₹{{ batch.unit_price }}</td>
+                                    <td>{{ batch.manufacturing_date }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="me-2">{{ batch.expiry_date }}</span>
+                                            {% if batch.is_expired %}
+                                            <span class="badge bg-danger">Expired</span>
+                                            {% elif batch.is_expiring_soon %}
+                                            <span class="badge bg-warning text-dark">Expiring Soon</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{% url 'stock_adjustment' batch.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <img src="{% static 'images/empty-state.svg' %}" alt="No stock" class="mb-4" style="max-width: 150px;">
+                        <h5 class="text-muted">No stock information available</h5>
+                        <p class="text-muted mb-4">Add stock information to start tracking inventory.</p>
+                        <a href="{% url 'admin:pharma_batch_add' %}?medicine={{ medicine.id }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Add Stock
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Sales History -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Sales History</h5>
+                    </div>
+
+                    {% if sales_history %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in sales_history %}
+                                <tr>
+                                    <td>{{ item.sale.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td>{{ item.sale.customer.name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>₹{{ item.unit_price }}</td>
+                                    <td class="text-end">₹{{ item.get_total }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <img src="{% static 'images/empty-state.svg' %}" alt="No sales" class="mb-4" style="max-width: 150px;">
+                        <h5 class="text-muted">No sales history available</h5>
+                        <p class="text-muted">This medicine hasn't been sold yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

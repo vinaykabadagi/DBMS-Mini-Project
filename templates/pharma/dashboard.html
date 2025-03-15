@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load pharma_extras %}
+
+{% block title %}Dashboard - PharmaCare{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Today's Sales</h6>
+                    <h2 class="card-title mb-0">₹{{ today_sales|default:"0"|floatformat:2 }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Monthly Sales</h6>
+                    <h2 class="card-title mb-0">₹{{ monthly_sales.total|default:"0"|floatformat:2 }}</h2>
+                    <p class="text-muted mb-0">{{ monthly_sales.count|default:"0" }} sales this month</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Low Stock Items</h6>
+                    <h2 class="card-title mb-0">{{ low_stock_count|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Expiring Soon</h6>
+                    <h2 class="card-title mb-0">{{ expiring_soon_count|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Trend Chart -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Sales Trend</h5>
+            <div id="salesChart" style="height: 300px;"></div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Low Stock Items -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Low Stock Items</h5>
+                    {% if low_stock_items %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Brand</th>
+                                    <th>Stock</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medicine in low_stock_items %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-medium">{{ medicine.name }}</div>
+                                        <div class="small text-muted">{{ medicine.generic_name }}</div>
+                                    </td>
+                                    <td>{{ medicine.brand.name }}</td>
+                                    <td>
+                                        <span class="badge bg-danger">{{ medicine.total_stock }} units</span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'medicine_detail' medicine.id %}" class="btn btn-sm btn-primary">
+                                            Add Stock
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <img src="{% static 'images/empty-state.svg' %}" alt="No items" class="mb-3" style="height: 120px;">
+                        <p class="text-muted">No low stock items</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Expiring Soon -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Expiring Soon</h5>
+                    {% if expiring_soon %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Batch</th>
+                                    <th>Expiry</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for batch in expiring_soon %}
+                                <tr>
+                                    <td>{{ batch.medicine.name }}</td>
+                                    <td>{{ batch.batch_number }}</td>
+                                    <td>
+                                        <span class="badge bg-warning">{{ batch.expiry_date }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <img src="{% static 'images/empty-state.svg' %}" alt="No items" class="mb-3" style="height: 120px;">
+                        <p class="text-muted">No items expiring soon</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    var options = {
+        series: [{
+            name: 'Sales',
+            data: {{ sales_data|default:"[0, 0, 0, 0, 0, 0, 0]"|safe }}
+        }],
+        chart: {
+            type: 'area',
+            height: 300,
+            toolbar: {
+                show: false
+            }
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 2
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.3,
+                stops: [0, 90, 100]
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        xaxis: {
+            categories: {{ day_labels|safe }},
+            labels: {
+                style: {
+                    colors: '#6c757d'
+                }
+            }
+        },
+        yaxis: {
+            labels: {
+                formatter: function(value) {
+                    return '₹' + value.toFixed(2);
+                },
+                style: {
+                    colors: '#6c757d'
+                }
+            }
+        },
+        tooltip: {
+            y: {
+                formatter: function(value) {
+                    return '₹' + value.toFixed(2);
+                }
+            }
+        },
+        colors: ['#0d6efd'],
+        grid: {
+            borderColor: '#f1f1f1',
+            padding: {
+                bottom: 15
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#salesChart"), options);
+    chart.render();
+</script>
+{% endblock %} 

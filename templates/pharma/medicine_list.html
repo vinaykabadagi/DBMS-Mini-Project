@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load pharma_extras %}
+
+{% block title %}Medicines - PharmaCare{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="h3 mb-0">Medicines</h1>
+            <p class="text-muted mb-0">Manage your medicine inventory</p>
+        </div>
+        <a href="{% url 'admin:pharma_medicine_add' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Add Medicine
+        </a>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Search</label>
+                    {{ search_form.search }}
+                    <div class="form-text">Search by name or generic name</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Category</label>
+                    {{ search_form.category }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Brand</label>
+                    {{ search_form.brand }}
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-1"></i>Search
+                    </button>
+                    <a href="{% url 'medicine_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo me-1"></i>Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Medicines List -->
+    {% if medicines %}
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Brand</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for medicine in medicines %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <a href="{% url 'medicine_detail' medicine.id %}" class="text-decoration-none">
+                                        <h6 class="mb-0">{{ medicine.name }}</h6>
+                                    </a>
+                                    <small class="text-muted">{{ medicine.generic_name }}</small>
+                                    {% if medicine.prescription_required %}
+                                    <span class="badge bg-warning text-dark ms-1">Rx</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ medicine.brand.name }}</td>
+                        <td>
+                            <span class="badge bg-light text-dark">{{ medicine.category }}</span>
+                        </td>
+                        <td>₹{{ medicine.price }}</td>
+                        <td>
+                            {% with total_stock=medicine.batch_set.all|sum_quantity %}
+                            {% if total_stock == 0 %}
+                            <span class="badge bg-danger">Out of Stock</span>
+                            {% elif total_stock <= 10 %}
+                            <span class="badge bg-warning text-dark">Low Stock ({{ total_stock }})</span>
+                            {% else %}
+                            <span class="badge bg-success">{{ total_stock }} units</span>
+                            {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group">
+                                <a href="{% url 'medicine_detail' medicine.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'admin:pharma_medicine_change' medicine.id %}" class="btn btn-sm btn-outline-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'admin:pharma_batch_add' %}?medicine={{ medicine.id }}" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <img src="{% static 'images/empty-state.svg' %}" alt="No medicines" class="mb-4" style="max-width: 200px;">
+            <h4 class="text-muted">No medicines found</h4>
+            <p class="text-muted mb-4">Try adjusting your search criteria or add a new medicine.</p>
+            <a href="{% url 'admin:pharma_medicine_add' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Add New Medicine
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %} 

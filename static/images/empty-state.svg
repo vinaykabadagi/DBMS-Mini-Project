@@ -1,0 +1,12 @@
+<svg width="184" height="152" viewBox="0 0 184 152" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .bg { fill: #F3F4F6 }
+        .stroke { fill: none; stroke: #D1D5DB; stroke-width: 2; stroke-linecap: round }
+        .icon { fill: #60A5FA }
+    </style>
+    <rect class="bg" width="184" height="152" rx="8"/>
+    <g transform="translate(62, 46)">
+        <path class="icon" d="M30 0H0v60h60V30L30 0zM30 8.5l21.5 21.5H30V8.5zM5 55V5h20v30h30v20H5z"/>
+        <path class="stroke" d="M15 25h10M15 35h30M15 45h30"/>
+    </g>
+</svg> 
