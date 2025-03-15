@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Customer - PharmaCare{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="h3 mb-0">Add New Customer</h1>
+            <p class="text-muted mb-0">Enter customer details below</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if next_url %}
+                        <input type="hidden" name="next" value="{{ next_url }}">
+                        {% endif %}
+                        
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text %}
+                            <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ field.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                Add Customer
+                            </button>
+                            {% if next_url %}
+                            <a href="{{ next_url }}" class="btn btn-light">Cancel</a>
+                            {% else %}
+                            <a href="{% url 'customer_list' %}" class="btn btn-light">Cancel</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add Bootstrap form classes to all form fields
+    document.querySelectorAll('input, select, textarea').forEach(function(element) {
+        element.classList.add('form-control');
+    });
+</script>
+{% endblock %} 

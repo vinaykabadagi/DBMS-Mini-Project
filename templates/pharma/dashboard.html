@@ -177,7 +177,9 @@
         },
         xaxis: {
             categories: {{ day_labels|safe }},
+            type: 'datetime',
             labels: {
+                format: 'MMM dd',
                 style: {
                     colors: '#6c757d'
                 }
@@ -194,6 +196,9 @@
             }
         },
         tooltip: {
+            x: {
+                format: 'dd MMM yyyy'
+            },
             y: {
                 formatter: function(value) {
                     return '₹' + value.toFixed(2);

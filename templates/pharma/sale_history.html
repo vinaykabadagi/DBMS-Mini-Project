@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sale History - PharmaCare{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="h3 mb-0">Sale History</h1>
+            <p class="text-muted mb-0">View all sales transactions</p>
+        </div>
+        <div>
+            <a href="{% url 'create_sale' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>New Sale
+            </a>
+        </div>
+    </div>
+
+    <!-- Sales List -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            {% if sales %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Amount</th>
+                            <th>Payment</th>
+                            <th>Created By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sale in sales %}
+                        <tr>
+                            <td>
+                                <div class="fw-medium">{{ sale.created_at|date:"M d, Y" }}</div>
+                                <div class="small text-muted">{{ sale.created_at|date:"h:i A" }}</div>
+                            </td>
+                            <td>
+                                <div class="fw-medium">{{ sale.customer.name }}</div>
+                                <div class="small text-muted">{{ sale.customer.phone }}</div>
+                            </td>
+                            <td>
+                                <div class="fw-medium">{{ sale.items.count }} items</div>
+                                <div class="small text-muted">
+                                    {% for item in sale.items.all|slice:":2" %}
+                                    {{ item.batch.medicine.name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                    {% if sale.items.count > 2 %}...{% endif %}
+                                </div>
+                            </td>
+                            <td>₹{{ sale.total_amount|floatformat:2 }}</td>
+                            <td>
+                                <span class="badge bg-success">{{ sale.get_payment_method_display }}</span>
+                            </td>
+                            <td>{{ sale.created_by.get_full_name }}</td>
+                            <td>
+                                <a href="{% url 'sale_detail' sale.id %}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    View Details
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+                <p class="text-muted mb-0">No sales found</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

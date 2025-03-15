@@ -1,26 +1,148 @@
-# DBMS-mini-project using django
-Prerequisites
-1. Install Python
-Install python and python-pip. Follow the steps from the below reference document based on your Operating System. Reference: https://docs.python-guide.org/starting/installation/
+# PharmaCare - Pharmacy Management System
 
-2.Install Django
+A modern, web-based pharmacy management system built with Django and Bootstrap 5. PharmaCare helps pharmacies manage their inventory, sales, and customer relationships efficiently.
+
+## Features
+
+### Dashboard
+- Real-time sales analytics
+- Daily and monthly sales overview
+- Low stock alerts
+- Expiring inventory notifications
+- Top selling medicines chart
+
+### Inventory Management
+- Medicine catalog with detailed information
+- Batch-wise stock tracking
+- Expiry date monitoring
+- Stock adjustment functionality
+- Low stock alerts
+
+### Sales Management
+- Quick and easy sale creation
+- Customer search integration
+- Multiple items per sale
+- Automatic stock updates
+- Payment method tracking
+- Complete sale history
+
+### Customer Management
+- Customer database
+- Purchase history tracking
+- Total purchase statistics
+- Easy customer search
+- Customer details management
+
+## Technical Stack
+
+### Backend
+- Django 4.x
+- Python 3.x
+- SQLite/PostgreSQL
+
+### Frontend
+- Bootstrap 5
+- Select2 for enhanced dropdowns
+- Font Awesome icons
+- jQuery for DOM manipulation
+- AJAX for dynamic data loading
+
+## Installation
+
+1. Clone the repository:
 ```bash
-py -m pip install Django
+git clone https://github.com/yourusername/DBMS-Mini-Project.git
+cd DBMS-Mini-Project
 ```
 
-# Clone git repository
-https://github.com/vinaykabadagi/DBMS-Mini-Project
-
-# Run the server
+2. Create and activate a virtual environment:
 ```bash
-# Make migrations
-python manage.py makemigrations
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Apply database migrations:
+```bash
 python manage.py migrate
-
-# Create Super User
-python manage.py createsuperuser
-
-# Run the server
-python manage.py runserver 
 ```
-Try opening http://localhost:8000 in the browser. Now you are good to go.
+
+5. Create a superuser:
+```bash
+python manage.py createsuperuser
+```
+
+6. Run the development server:
+```bash
+python manage.py runserver
+```
+
+## Usage
+
+### Setting Up Initial Data
+- Log in as admin
+- Add medicine categories and brands
+- Add medicines with their details
+- Create initial inventory batches
+- Add customers
+
+### Making a Sale
+1. Click "New Sale" from the dashboard
+2. Select or add a customer
+3. Add medicines to the sale
+4. Select payment method
+5. Complete the sale
+
+### Managing Inventory
+- Monitor stock levels from dashboard
+- Adjust stock quantities as needed
+- Track expiring medicines
+- Add new batches when stock arrives
+
+### Customer Management
+- Add new customers
+- View customer purchase history
+- Track customer statistics
+- Search customers by name or phone
+
+## Security Features
+- User authentication required
+- Login protection for all views
+- CSRF protection
+- Form validation
+- Protected customer deletion
+
+## Best Practices
+- Optimized database queries
+- Proper error handling
+- User-friendly messages
+- Responsive design
+- Clean code structure
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Django framework
+- Bootstrap team
+- Select2 library
+- Font Awesome
+- All contributors
+
+## Support
+
+For support, please open an issue in the GitHub repository or contact the development team.
